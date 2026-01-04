@@ -9,8 +9,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Yaw - Operator, Designer & Entrepreneur",
-  description: "Operator, Designer & Entrepreneur working at the intersection of product development, design, and growth.",
+  title: "Yaw Antwi Owusu - Operator, Designer & Entrepreneur",
+  description: " I am Yaw Antwi Owusu, an Operator, Designer & Entrepreneur working at the intersection of product development, design, and growth.",
+  openGraph: {
+    title: "Yaw Antwi Owusu - Operator, Designer & Entrepreneur",
+    description: " I am Yaw Antwi Owusu, an Operator, Designer & Entrepreneur working at the intersection of product development, design, and growth.",
+    url: "https://yawantwiowusu.com",
+    siteName: "Yaw Antwi Owusu",
+    images: [
+      { url: "/yawlogo.png" },
+    ],
+  },
 };
 
 export default function RootLayout({

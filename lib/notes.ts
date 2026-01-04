@@ -58,6 +58,23 @@ export const notes: Note[] = [
     `,
     excerpt: "An exploration of the Ghanaian podcast ecosystem, its advantages over traditional radio, key industry players, and predictions for the future of podcasting in Ghana.",
   },
+  {
+    slug: "ghanaian-artiste-equipped-technology-tools-exposure",
+    title: "The Ghanaian Artiste Is Equipped with Technology Tools for Exposure",
+    category: "Music",
+    datePublished: "2019-08-03",
+    featuredImage: "/images/notes/ghanaian-artiste-technology-tools.jpg",
+    content: `
+      <p>Originally published on <a href="https://www.technovagh.com" target="_blank" rel="noopener noreferrer">www.technovagh.com</a> in January 2018, this piece explores how technology has reshaped music consumption in Ghana.</p>
+      
+      <p>Streaming platforms, social media, digital stores, and analytics tools have empowered Ghanaian musicians more than ever before. Today, an artist no longer needs a traditional record label to build a sustainable career.</p>
+      
+      <p>Key pillars include branding, new media, and digital distribution. Artists now own their platforms, distribute music globally via Apple Music and Spotify, leverage local platforms like Aftown and OnBarz, and use analytics to understand audiences.</p>
+      
+      <p>Technology has helped Ghanaian musicians overcome the "famous but broke" syndrome by enabling ownership, reach, and monetization.</p>
+    `,
+    excerpt: "Exploring how technology has reshaped music consumption in Ghana, empowering artists with streaming platforms, social media, and digital distribution tools.",
+  },
 ];
 
 export function getNoteBySlug(slug: string): Note | undefined {
