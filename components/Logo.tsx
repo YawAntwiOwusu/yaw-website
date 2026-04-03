@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 
 interface LogoProps {
   className?: string;
@@ -7,14 +6,17 @@ interface LogoProps {
 
 export default function Logo({ className = "" }: LogoProps) {
   return (
-    <Link href="/" className={`inline-block ${className}`}>
-      <Image
-        src="/yawlogo.png"
-        alt="Yaw logo"
-        width={191.49}
-        height={96.44}
-        priority
-      />
+    <Link
+      href="/"
+      className={`inline-flex items-baseline gap-0.5 text-foreground no-underline hover:opacity-90 ${className}`}
+      aria-label="Yaw, home"
+    >
+      <span className="text-2xl font-black tracking-[0.08em] md:text-3xl md:tracking-[0.1em]">
+        YAW
+      </span>
+      <span className="text-[0.55rem] font-bold leading-none md:text-[0.65rem]">
+        ™
+      </span>
     </Link>
   );
 }

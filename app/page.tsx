@@ -1,6 +1,7 @@
-import Header from "@/components/Header";
+import SiteHeader from "@/components/SiteHeader";
 import Hero from "@/components/Hero";
-import SocialLinks from "@/components/SocialLinks";
+import ProjectsSection from "@/components/ProjectsSection";
+import Footer from "@/components/Footer";
 
 const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/in/yawantwiowusu/" },
@@ -10,15 +11,15 @@ const socialLinks = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#02001A] flex flex-col">
-      <Header />
-      <div className="flex-1 page-padding pb-16 md:pb-24">
-        <div className="page-container flex flex-col justify-between min-h-[calc(100vh-200px)]">
-          <Hero className="mt-12 md:mt-20" />
-          <SocialLinks links={socialLinks} className="mt-16 md:mt-24" />
+    <main className="min-h-screen bg-background flex flex-col">
+      <SiteHeader />
+      <div className="flex-1 page-padding pt-4 md:pt-6 pb-0">
+        <div className="page-container">
+          <Hero className="mb-6 md:mb-8" />
         </div>
       </div>
+      <ProjectsSection />
+      <Footer links={socialLinks} />
     </main>
   );
 }
-
