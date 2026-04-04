@@ -33,6 +33,8 @@ const FEATURED = [
   `${IMG_BASE}/%2314/1755502670717.jpeg`,
   `${IMG_BASE}/%2315/1756110163115.jpeg`,
   `${IMG_BASE}/%2316/featured%20image.jpeg`,
+  `${IMG_BASE}/%2317/featured%20image.jpeg`,
+  `${IMG_BASE}/%2318/featured%20image.jpeg`,
 ];
 
 function featuredBasename(index) {
@@ -143,6 +145,7 @@ function mapCategory(line) {
   if (/^Music/i.test(l)) return "Music";
   if (/Thoughts/i.test(l)) return "Thoughts";
   if (/Product\s*Musings/i.test(l)) return "Product Musings";
+  if (/Entrepreneurship\s+in\s+Ghana/i.test(l)) return "Entrepreneurship in Ghana";
   if (/Career/i.test(l) && !/Personal/i.test(l)) return "Career";
   if (/Entrepreneur/i.test(l) || /Personal Life/i.test(l)) return "Personal Life";
   return "Personal Notes";

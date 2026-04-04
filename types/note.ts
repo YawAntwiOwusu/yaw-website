@@ -5,7 +5,8 @@ export type NoteCategory =
   | "Personal Notes"
   | "Career"
   | "Thoughts"
-  | "Product Musings";
+  | "Product Musings"
+  | "Entrepreneurship in Ghana";
 
 export interface Note {
   slug: string;
