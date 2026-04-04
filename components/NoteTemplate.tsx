@@ -7,6 +7,9 @@ import NoteShareBar from "./NoteShareBar";
 
 const DEFAULT_AUTHOR = "Yaw Antwi-Owusu";
 
+const AUTHOR_AVATAR_PATH = "THE BERNARD CATALOGUE 2.0 00119_1.jpg";
+const AUTHOR_AVATAR_SRC = `/images/${encodeURIComponent(AUTHOR_AVATAR_PATH)}`;
+
 interface NoteTemplateProps {
   title: string;
   category: NoteCategory;
@@ -56,31 +59,36 @@ export default function NoteTemplate({
         {title}
       </h1>
 
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 text-sm text-muted">
-        <span className="flex min-w-0 flex-1 items-center gap-2">
-          <span
-            className="h-8 w-8 shrink-0 rounded-full bg-neutral-300"
-            aria-hidden
-          />
+      <div className="mb-8 grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 text-sm text-muted sm:gap-x-4">
+        <span className="flex min-w-0 items-center gap-2 justify-self-start overflow-hidden">
+          <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-neutral-200 ring-1 ring-neutral-200/80">
+            <Image
+              src={AUTHOR_AVATAR_SRC}
+              alt=""
+              fill
+              className="object-cover object-top"
+              sizes="32px"
+            />
+          </span>
           <span className="truncate text-foreground">{displayAuthor}</span>
         </span>
-        <div className="flex shrink-0 items-center gap-3">
+        <span className="shrink-0 whitespace-nowrap tabular-nums justify-self-center text-center">
+          {datePublished}
+          {readTimeMinutes != null && (
+            <>
+              <span aria-hidden className="mx-1.5 text-neutral-300">
+                ·
+              </span>
+              {readTimeMinutes} min read
+            </>
+          )}
+        </span>
+        <div className="flex min-w-0 justify-end justify-self-end overflow-hidden">
           <NoteShareBar
             url={shareUrl}
             title={title}
             summary={shareSummary}
           />
-          <span className="whitespace-nowrap tabular-nums text-right">
-            {datePublished}
-            {readTimeMinutes != null && (
-              <>
-                <span aria-hidden className="mx-1.5 text-neutral-300">
-                  ·
-                </span>
-                {readTimeMinutes} min read
-              </>
-            )}
-          </span>
         </div>
       </div>
 
