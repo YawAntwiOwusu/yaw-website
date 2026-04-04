@@ -1,11 +1,15 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getNoteBySlug, formatDate, getAllNotes } from "@/lib/notes";
+import NoteArticleJsonLd from "@/components/NoteArticleJsonLd";
 import NoteTemplate from "@/components/NoteTemplate";
 import MinimalHeader from "@/components/MinimalHeader";
 import RelatedNotes from "@/components/RelatedNotes";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://yawantwiowusu.com";
+import {
+  SITE_URL,
+  absoluteUrl,
+  noteMetaDescription,
+} from "@/lib/site";
 
 interface NotePageProps {
   params: Promise<{ slug: string }>;
@@ -28,16 +32,31 @@ export async function generateMetadata({
   }
 
   const url = `${SITE_URL}/${note.slug}`;
-  const featuredImageUrl = note.featuredImage.startsWith("http")
-    ? note.featuredImage
-    : `${SITE_URL}${note.featuredImage}`;
+  const featuredImageUrl = absoluteUrl(note.featuredImage);
+  const description = noteMetaDescription(note);
+  const authorName = note.author ?? "Yaw Antwi-Owusu";
+  const twitterHandle =
+    process.env.NEXT_PUBLIC_TWITTER_SITE ||
+    process.env.NEXT_PUBLIC_TWITTER_HANDLE;
 
   return {
     title: `${note.title} | Notes`,
-    description: note.excerpt || note.title,
+    description,
+    keywords: [
+      note.category,
+      "Ghana",
+      "Yaw Antwi Owusu",
+      "Yaw Antwi-Owusu",
+      "notes",
+      "essay",
+    ],
+    authors: [{ name: authorName, url: SITE_URL }],
+    creator: authorName,
+    publisher: "Yaw Antwi-Owusu",
+    robots: { index: true, follow: true },
     openGraph: {
       title: note.title,
-      description: note.excerpt || note.title,
+      description,
       url,
       siteName: "Yaw Antwi-Owusu",
       images: [
@@ -51,18 +70,23 @@ export async function generateMetadata({
       locale: "en_US",
       type: "article",
       publishedTime: note.datePublished,
-      authors: ["Yaw Antwi-Owusu"],
+      modifiedTime: note.datePublished,
+      authors: [authorName],
       section: note.category,
     },
     twitter: {
       card: "summary_large_image",
       title: note.title,
-      description: note.excerpt || note.title,
+      description,
       images: [featuredImageUrl],
+      ...(twitterHandle
+        ? { site: twitterHandle, creator: twitterHandle }
+        : {}),
     },
     alternates: {
       canonical: url,
     },
+    category: note.category,
   };
 }
 
@@ -83,9 +107,21 @@ export default async function NoteArticlePage({ params }: NotePageProps) {
   const formattedDate = formatDate(note.datePublished);
   const readTime = getReadTimeMinutes(note.content);
   const otherNotes = getAllNotes().filter((n) => n.slug !== note.slug).slice(0, 4);
+  const shareUrl = `${SITE_URL}/${note.slug}`;
+  const shareSummary = noteMetaDescription(note);
+  const authorName = note.author ?? "Yaw Antwi-Owusu";
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
+      <NoteArticleJsonLd
+        title={note.title}
+        description={shareSummary}
+        url={shareUrl}
+        featuredImagePath={note.featuredImage}
+        datePublished={note.datePublished}
+        authorName={authorName}
+        category={note.category}
+      />
       <MinimalHeader />
       <div className="flex-1 page-padding py-16 md:py-24">
         <div className="page-container">
@@ -97,6 +133,8 @@ export default async function NoteArticlePage({ params }: NotePageProps) {
             featuredImage={note.featuredImage}
             author={note.author}
             readTimeMinutes={readTime}
+            shareUrl={shareUrl}
+            shareSummary={shareSummary}
           />
           {otherNotes.length > 0 && <RelatedNotes notes={otherNotes} />}
         </div>

@@ -1,6 +1,9 @@
 /**
  * One-off: parses Google Doc plain-text export and writes lib/notes.ts
- * Source: docs export saved to agent-tools path or pass path as argv[2]
+ * Source: docs/articles-backup-export.txt or pass path as argv[2]
+ *
+ * SEO / sharing: each note's title, excerpt, category, datePublished, and featuredImage
+ * feed app/[slug]/page.tsx (Open Graph, Twitter, JSON-LD) and social previews. Keep excerpts substantive.
  */
 import fs from "fs";
 import path from "path";
@@ -287,6 +290,7 @@ const header = `import { Note, NoteCategory } from "@/types/note";
 /* Generated from Google Doc backup + featured + inline images under public/images/Articles backup picture/#N/
  * Paragraphs follow each export line; 2+ blank lines → .note-doc-section-gap (see globals.css).
  * Regenerate: node scripts/generate-notes-from-doc-export.mjs <path-to-export.txt>
+ * Meta/sharing: title, excerpt, category, datePublished, featuredImage → OG/Twitter/JSON-LD (see app/[slug]/page.tsx).
  */
 
 export const notes: Note[] = [

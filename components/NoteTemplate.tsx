@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { NoteCategory } from "@/types/note";
 import Image from "next/image";
+import NoteShareBar from "./NoteShareBar";
 
 const DEFAULT_AUTHOR = "Yaw Antwi-Owusu";
 
@@ -14,6 +15,8 @@ interface NoteTemplateProps {
   featuredImage: string;
   author?: string;
   readTimeMinutes?: number;
+  shareUrl: string;
+  shareSummary: string;
 }
 
 export default function NoteTemplate({
@@ -24,6 +27,8 @@ export default function NoteTemplate({
   featuredImage,
   author,
   readTimeMinutes,
+  shareUrl,
+  shareSummary,
 }: NoteTemplateProps) {
   const displayAuthor = author ?? DEFAULT_AUTHOR;
 
@@ -51,7 +56,7 @@ export default function NoteTemplate({
         {title}
       </h1>
 
-      <div className="mb-8 flex flex-nowrap items-center justify-between gap-4 text-sm text-muted">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 text-sm text-muted">
         <span className="flex min-w-0 flex-1 items-center gap-2">
           <span
             className="h-8 w-8 shrink-0 rounded-full bg-neutral-300"
@@ -59,17 +64,24 @@ export default function NoteTemplate({
           />
           <span className="truncate text-foreground">{displayAuthor}</span>
         </span>
-        <span className="shrink-0 whitespace-nowrap tabular-nums text-right">
-          {datePublished}
-          {readTimeMinutes != null && (
-            <>
-              <span aria-hidden className="mx-1.5 text-neutral-300">
-                ·
-              </span>
-              {readTimeMinutes} min read
-            </>
-          )}
-        </span>
+        <div className="flex shrink-0 items-center gap-3">
+          <NoteShareBar
+            url={shareUrl}
+            title={title}
+            summary={shareSummary}
+          />
+          <span className="whitespace-nowrap tabular-nums text-right">
+            {datePublished}
+            {readTimeMinutes != null && (
+              <>
+                <span aria-hidden className="mx-1.5 text-neutral-300">
+                  ·
+                </span>
+                {readTimeMinutes} min read
+              </>
+            )}
+          </span>
+        </div>
       </div>
 
       {featuredImage && (
