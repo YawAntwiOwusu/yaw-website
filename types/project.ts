@@ -3,7 +3,11 @@ export type ProjectCategory =
   | "Event Series"
   | "Event"
   | "Internship"
-  | "Org";
+  | "Org"
+  | "Community"
+  | "Company"
+  | "Ecosystem Development"
+  | "AI Experiment";
 
 export interface Project {
   slug: string;
