@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Run in Terminal.app (not the agent): your SSH key must be loaded (ssh-add).
+# Rewrites GitHub HTTPS → SSH so Keychain does not use the wrong GitHub account.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-git remote set-url origin git@github.com:YawAntwiOwusu/yaw-website.git
+./scripts/setup-github-ssh.sh
 
 echo "==> Fetch origin"
 git fetch origin
