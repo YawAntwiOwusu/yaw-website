@@ -59,7 +59,41 @@ export default function NoteTemplate({
         {title}
       </h1>
 
-      <div className="mb-8 grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-2 text-sm text-muted sm:gap-x-4">
+      {/* Mobile: author + share on one row; date/read time below (avoids cramped 3-col grid). */}
+      <div className="mb-8 flex flex-col gap-3 text-sm text-muted sm:hidden">
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <span className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+            <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-neutral-200 ring-1 ring-neutral-200/80">
+              <Image
+                src={AUTHOR_AVATAR_SRC}
+                alt=""
+                fill
+                className="object-cover object-top"
+                sizes="32px"
+              />
+            </span>
+            <span className="min-w-0 truncate text-foreground">{displayAuthor}</span>
+          </span>
+          <NoteShareBar
+            url={shareUrl}
+            title={title}
+            summary={shareSummary}
+          />
+        </div>
+        <p className="tabular-nums leading-normal text-muted">
+          {datePublished}
+          {readTimeMinutes != null && (
+            <>
+              <span aria-hidden className="mx-1.5 text-neutral-300">
+                ·
+              </span>
+              {readTimeMinutes} min read
+            </>
+          )}
+        </p>
+      </div>
+
+      <div className="mb-8 hidden w-full min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-4 text-sm text-muted sm:grid">
         <span className="flex min-w-0 items-center gap-2 justify-self-start overflow-hidden">
           <span className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-neutral-200 ring-1 ring-neutral-200/80">
             <Image

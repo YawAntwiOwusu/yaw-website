@@ -100,13 +100,13 @@ export default function NoteShareBar({ url, title, summary }: NoteShareBarProps)
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-full border border-neutral-200 px-3 text-sm font-medium text-muted transition-colors hover:border-neutral-300 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="inline-flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full border border-neutral-200 text-sm font-medium text-muted transition-colors hover:border-neutral-300 hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:w-auto sm:px-3"
         aria-expanded={open}
         aria-haspopup="menu"
         aria-label="Share this note"
       >
         <ShareIcon className="shrink-0" />
-        <span>Share</span>
+        <span className="hidden sm:inline">Share</span>
       </button>
 
       {open && (
