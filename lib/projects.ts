@@ -32,7 +32,7 @@ export const projects: Project[] = [
     category: "Community",
     year: "2025",
     description:
-      "First Cursor Community Meetup in Ghana at MEST Africa; Cursor Ambassador growing the local builder community.",
+      "Building Ghana's Cursor community for developers and AI-native makers as a Cursor Ambassador.",
     image: projectCardImage("Cursor Ghana card.png"),
     href: "https://www.cursorghana.com",
     internal: false,
