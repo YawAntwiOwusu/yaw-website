@@ -34,7 +34,7 @@ export const projects: Project[] = [
     description:
       "First Cursor Community Meetup in Ghana at MEST Africa; Cursor Ambassador growing the local builder community.",
     image: projectCardImage("Cursor Ghana card.png"),
-    href: "https://www.linkedin.com/posts/yawantwiowusu_cursoringhana-ghanatechtotheworld-communitybuilding-activity-7368301839840210944-6ZBd?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAABGvI_IB3ulAm7ibFYvoI7t11d_-IR5GEZk",
+    href: "https://www.cursorghana.com",
     internal: false,
   },
   {
