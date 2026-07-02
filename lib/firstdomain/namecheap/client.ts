@@ -45,20 +45,74 @@ export function generateDomainCandidates(projectName: string): string[] {
 
 function parseDomainCheckResponse(xml: string): DomainCheckResult[] {
   const results: DomainCheckResult[] = [];
-  const domainRegex =
-    /<DomainCheckResult Domain="([^"]+)" Available="(true|false)"(?:[^>]*?(?:IsPremiumName="true")?)?(?:[^>]*?(?:PremiumRegistrationPrice="([^"]*)")?)?[^>]*\/?>/g;
+  const tagRegex = /<DomainCheckResult\b([^>]*)\/?>/g;
 
   let match;
-  while ((match = domainRegex.exec(xml)) !== null) {
+  while ((match = tagRegex.exec(xml)) !== null) {
+    const attrs = match[1];
+    const attr = (name: string) =>
+      attrs.match(new RegExp(`${name}="([^"]*)"`))?.[1];
+
+    const domain = attr("Domain");
+    if (!domain) continue;
+
     results.push({
-      domain: match[1],
-      available: match[2] === "true",
-      price: match[3] || undefined,
-      premium: xml.includes(`Domain="${match[1]}"`) && xml.includes("IsPremiumName=\"true\""),
+      domain,
+      available: attr("Available") === "true",
+      price: attr("PremiumRegistrationPrice") || undefined,
+      premium: attr("IsPremiumName") === "true",
     });
   }
 
   return results;
+}
+
+/**
+ * Availability via DNS-over-HTTPS: NXDOMAIN strongly suggests the domain is
+ * unregistered. Registered-but-undelegated domains are rare, and anything
+ * ambiguous is reported as taken so we never show a taken domain as available.
+ */
+async function checkViaDns(domain: string): Promise<boolean> {
+  const response = await fetch(
+    `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=NS`,
+    { headers: { Accept: "application/dns-json" } }
+  );
+  if (!response.ok) return false;
+  const data = (await response.json()) as { Status: number };
+  return data.Status === 3; // NXDOMAIN
+}
+
+/**
+ * Fallback availability check via RDAP (public registry data, no API key).
+ * rdap.org redirects to the registry's RDAP server; a 404 from the registry
+ * means the domain is unregistered. If the TLD has no RDAP server (rdap.org
+ * itself 404s without redirecting, e.g. .io/.co), fall back to a DNS check.
+ */
+async function checkViaRdap(domains: string[]): Promise<DomainCheckResult[]> {
+  return Promise.all(
+    domains.map(async (domain): Promise<DomainCheckResult> => {
+      try {
+        const redirect = await fetch(
+          `https://rdap.org/domain/${encodeURIComponent(domain)}`,
+          { headers: { Accept: "application/rdap+json" }, redirect: "manual" }
+        );
+
+        const location = redirect.headers.get("location");
+        if (redirect.status >= 300 && redirect.status < 400 && location) {
+          const registry = await fetch(location, {
+            headers: { Accept: "application/rdap+json" },
+          });
+          if (registry.status === 404) return { domain, available: true };
+          if (registry.ok) return { domain, available: false };
+          // Registry errored; fall through to DNS.
+        }
+
+        return { domain, available: await checkViaDns(domain) };
+      } catch {
+        return { domain, available: false };
+      }
+    })
+  );
 }
 
 export async function checkDomainAvailability(
@@ -67,11 +121,7 @@ export async function checkDomainAvailability(
   const config = getConfig();
 
   if (!config) {
-    return domains.map((domain) => ({
-      domain,
-      available: Math.random() > 0.4,
-      price: "12.98",
-    }));
+    return checkViaRdap(domains);
   }
 
   const domainList = domains.join(",");
