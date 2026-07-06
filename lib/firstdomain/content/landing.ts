@@ -55,7 +55,7 @@ export const landingContent = {
         title: "One domain, fully yours",
         description:
           "Registration of one standard domain name, registered in your own account. You own it from day one.",
-        href: "/firstdomain/check-domain",
+        href: "/firstdomain#search",
         linkLabel: "Check availability",
       },
       {
@@ -71,7 +71,7 @@ export const landingContent = {
         title: "Feedback that continues",
         description:
           "Ongoing support and feedback whenever possible, from application through launch and beyond.",
-        href: "/firstdomain/apply",
+        href: "/firstdomain#search",
         linkLabel: "Apply now",
       },
     ],

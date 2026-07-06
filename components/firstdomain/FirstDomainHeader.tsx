@@ -5,7 +5,7 @@ const navLinks = [
   { href: "/firstdomain", label: "Home" },
   { href: "/firstdomain/winners", label: "Winners" },
   { href: "/firstdomain/builders", label: "Builders" },
-  { href: "/firstdomain/check-domain", label: "Check Domain" },
+  { href: "/firstdomain#search", label: "Check Domain" },
 ];
 
 export function FirstDomainHeader({ className }: { className?: string }) {
@@ -38,13 +38,13 @@ export function FirstDomainHeader({ className }: { className?: string }) {
         </nav>
         <div className="flex items-center gap-2">
           <Link
-            href="/firstdomain/check-domain"
+            href="/firstdomain#search"
             className="hidden rounded-xl bg-neutral-100 px-4 py-2.5 text-[13px] font-medium text-neutral-900 transition-colors hover:bg-neutral-200 sm:block"
           >
             Check Domain
           </Link>
           <Link
-            href="/firstdomain/apply"
+            href="/firstdomain#search"
             className="rounded-xl bg-neutral-900 px-4 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-neutral-700"
           >
             Apply Now

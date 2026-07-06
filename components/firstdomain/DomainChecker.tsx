@@ -19,6 +19,9 @@ interface DomainCheckerProps {
   onSelectDomain?: (domain: string, price?: string) => void;
   selectedDomain?: string;
   compact?: boolean;
+  variant?: "light" | "dark";
+  selectLabel?: string;
+  inputId?: string;
 }
 
 export function DomainChecker({
@@ -26,6 +29,9 @@ export function DomainChecker({
   onSelectDomain,
   selectedDomain,
   compact = false,
+  variant = "light",
+  selectLabel = "Select",
+  inputId = "projectName",
 }: DomainCheckerProps) {
   const [projectName, setProjectName] = useState(initialProjectName);
   const [results, setResults] = useState<DomainResult[]>([]);
@@ -57,8 +63,15 @@ export function DomainChecker({
     }
   }
 
+  const isDark = variant === "dark";
+
   return (
-    <Card className={cn(compact && "border-0 shadow-none")}>
+    <Card
+      className={cn(
+        compact && "border-0 bg-transparent shadow-none",
+        isDark && compact && "text-white"
+      )}
+    >
       {!compact && (
         <CardHeader>
           <CardTitle>Domain Availability Checker</CardTitle>
@@ -69,38 +82,62 @@ export function DomainChecker({
         </CardHeader>
       )}
       <CardContent className={cn(compact && "p-0")}>
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <div className="flex-1">
-            <Label htmlFor="projectName" className="sr-only">
+            <Label htmlFor={inputId} className="sr-only">
               Project Name
             </Label>
             <Input
-              id="projectName"
+              id={inputId}
               placeholder="e.g. PrintBible"
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleCheck()}
+              className={cn(
+                isDark &&
+                  "border-white/20 bg-white/10 text-white placeholder:text-neutral-400"
+              )}
             />
           </div>
-          <Button onClick={handleCheck} disabled={loading || !projectName.trim()}>
+          <Button
+            onClick={handleCheck}
+            disabled={loading || !projectName.trim()}
+            className={cn(
+              isDark && "bg-white text-neutral-950 hover:bg-neutral-200"
+            )}
+          >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              "Check"
+              "Check availability"
             )}
           </Button>
         </div>
 
         {error && (
-          <p className="mt-4 text-sm text-red-600">{error}</p>
+          <p className={cn("mt-4 text-sm", isDark ? "text-red-300" : "text-red-600")}>
+            {error}
+          </p>
         )}
 
         {results.length > 0 && (
           <div className="mt-6 space-y-2">
-            <p className="text-sm font-medium text-slate-700">
+            <p
+              className={cn(
+                "text-sm font-medium",
+                isDark ? "text-neutral-300" : "text-slate-700"
+              )}
+            >
               Suggested domains for &ldquo;{projectName}&rdquo;
             </p>
-            <ul className="divide-y divide-slate-100 rounded-lg border border-slate-200">
+            <ul
+              className={cn(
+                "divide-y rounded-lg border",
+                isDark
+                  ? "divide-white/10 border-white/15 bg-white/5"
+                  : "divide-slate-100 border-slate-200"
+              )}
+            >
               {results.map((result) => (
                 <li
                   key={result.domain}
@@ -108,8 +145,11 @@ export function DomainChecker({
                     "flex items-center justify-between px-4 py-3",
                     onSelectDomain &&
                       result.available &&
-                      "cursor-pointer hover:bg-slate-50",
-                    selectedDomain === result.domain && "bg-indigo-50"
+                      (isDark
+                        ? "cursor-pointer hover:bg-white/10"
+                        : "cursor-pointer hover:bg-slate-50"),
+                    selectedDomain === result.domain &&
+                      (isDark ? "bg-white/10" : "bg-indigo-50")
                   )}
                   onClick={() =>
                     result.available &&
@@ -126,7 +166,12 @@ export function DomainChecker({
                   </div>
                   <div className="flex items-center gap-3">
                     {result.price && result.available && (
-                      <span className="text-sm text-slate-500">
+                      <span
+                        className={cn(
+                          "text-sm",
+                          isDark ? "text-neutral-400" : "text-slate-500"
+                        )}
+                      >
                         ~${result.price}/yr
                       </span>
                     )}
@@ -139,12 +184,19 @@ export function DomainChecker({
                             ? "default"
                             : "outline"
                         }
+                        className={cn(
+                          isDark &&
+                            selectedDomain !== result.domain &&
+                            "border-white/20 bg-transparent text-white hover:bg-white/10"
+                        )}
                         onClick={(e) => {
                           e.stopPropagation();
                           onSelectDomain(result.domain, result.price);
                         }}
                       >
-                        {selectedDomain === result.domain ? "Selected" : "Select"}
+                        {selectedDomain === result.domain
+                          ? "Selected"
+                          : selectLabel}
                       </Button>
                     )}
                   </div>

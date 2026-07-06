@@ -20,8 +20,8 @@ export default async function ApplyPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-900">Apply to First Domain</h1>
         <p className="mt-2 text-slate-600">
-          Tell us about yourself, your startup, and the domain you want to launch
-          with.
+          Complete your application for the domain you selected. You can review
+          and edit your domain before submitting.
         </p>
       </div>
       <ApplicationForm
