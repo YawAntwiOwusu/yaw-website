@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,6 @@ import {
   FIRSTDOMAIN_LAUNCH_STAGES,
   FIRSTDOMAIN_LAUNCH_TIMELINES,
 } from "@/lib/firstdomain/types";
-import { DomainChecker } from "@/components/firstdomain/DomainChecker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,16 +28,15 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { submitApplicationAction } from "@/lib/firstdomain/actions/server-actions";
+import {
+  getSelectedDomain,
+  verifyDomainAvailable,
+} from "@/lib/firstdomain/application-draft";
+import { SelectedDomainBanner } from "@/components/firstdomain/SelectedDomainBanner";
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
-const STEPS = [
-  "Personal",
-  "Founder",
-  "Startup",
-  "Domain",
-  "Builder Wall",
-  "Review",
-];
+const STEPS = ["Personal", "Founder", "Startup", "Builder Wall", "Review"];
 
 interface ApplicationFormProps {
   applicationsOpen: boolean;
@@ -53,6 +51,9 @@ export function ApplicationForm({
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+  const [domainVerified, setDomainVerified] = useState(false);
+  const [verifyingDomain, setVerifyingDomain] = useState(false);
 
   const form = useForm<ApplicationFormData>({
     resolver: zodResolver(applicationFormSchema),
@@ -86,6 +87,27 @@ export function ApplicationForm({
 
   const values = form.watch();
 
+  useEffect(() => {
+    const draft = getSelectedDomain();
+    if (!draft?.domain) {
+      router.replace("/firstdomain#search");
+      return;
+    }
+
+    form.setValue("desiredDomain", draft.domain);
+    if (draft.estimatedPrice) {
+      form.setValue("estimatedPrice", draft.estimatedPrice);
+    }
+    setDomainVerified(true);
+    setReady(true);
+  }, [form, router]);
+
+  useEffect(() => {
+    if (step === STEPS.length - 1 && values.desiredDomain) {
+      setDomainVerified(true);
+    }
+  }, [step, values.desiredDomain]);
+
   if (!applicationsOpen) {
     return (
       <Card>
@@ -95,14 +117,52 @@ export function ApplicationForm({
           </h2>
           <p className="mt-2 text-slate-600">
             Check back when the next cycle opens. You can still explore previous
-            winners and check domain availability.
+            winners and search for domains on the homepage.
           </p>
         </CardContent>
       </Card>
     );
   }
 
+  if (!ready) {
+    return (
+      <div className="flex items-center justify-center py-16 text-slate-500">
+        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+        Loading your application…
+      </div>
+    );
+  }
+
+  async function handleVerifyDomain() {
+    const domain = form.getValues("desiredDomain").trim();
+    if (!domain) {
+      setDomainVerified(false);
+      return;
+    }
+
+    setVerifyingDomain(true);
+    setError(null);
+
+    try {
+      const available = await verifyDomainAvailable(domain);
+      setDomainVerified(available);
+      if (!available) {
+        setError("That domain is not available. Try another name or pick from search results.");
+      }
+    } catch {
+      setDomainVerified(false);
+      setError("Could not verify domain availability. Please try again.");
+    } finally {
+      setVerifyingDomain(false);
+    }
+  }
+
   async function handleSubmit() {
+    if (!domainVerified) {
+      setError("Please verify your domain is available before submitting.");
+      return;
+    }
+
     const valid = await form.trigger();
     if (!valid) return;
 
@@ -132,6 +192,8 @@ export function ApplicationForm({
 
   return (
     <div>
+      <SelectedDomainBanner />
+
       {cycleName && (
         <p className="mb-6 text-sm text-indigo-600">
           Applying for: <strong>{cycleName}</strong>
@@ -285,31 +347,6 @@ export function ApplicationForm({
                   {...form.register("prototypeNotes")}
                 />
               </div>
-            </>
-          )}
-
-          {step === 3 && (
-            <>
-              <DomainChecker
-                initialProjectName={values.projectName}
-                selectedDomain={values.desiredDomain}
-                compact
-                onSelectDomain={(domain, price) => {
-                  form.setValue("desiredDomain", domain);
-                  if (price) form.setValue("estimatedPrice", price);
-                  const alternatives = form
-                    .getValues("domainAlternatives")
-                    .filter((d) => d !== domain);
-                  if (!alternatives.includes(domain)) {
-                    form.setValue("domainAlternatives", alternatives);
-                  }
-                }}
-              />
-              {form.formState.errors.desiredDomain && (
-                <p className="text-sm text-red-600">
-                  Please select a desired domain
-                </p>
-              )}
               <div>
                 <Label>Launch Timeline *</Label>
                 <Select
@@ -344,7 +381,7 @@ export function ApplicationForm({
             </>
           )}
 
-          {step === 4 && (
+          {step === 3 && (
             <>
               <div className="flex items-center justify-between rounded-lg border border-slate-200 p-4">
                 <div>
@@ -380,7 +417,7 @@ export function ApplicationForm({
             </>
           )}
 
-          {step === 5 && (
+          {step === 4 && (
             <>
               <div className="space-y-3 text-sm">
                 <p>
@@ -393,15 +430,57 @@ export function ApplicationForm({
                   <strong>Project:</strong> {values.projectName}
                 </p>
                 <p>
-                  <strong>Domain:</strong> {values.desiredDomain || "—"}
-                </p>
-                <p>
                   <strong>Category:</strong> {values.category}
                 </p>
                 <p>
                   <strong>Launch Stage:</strong> {values.launchStage}
                 </p>
+                <p>
+                  <strong>Launch Timeline:</strong> {values.launchTimeline}
+                </p>
               </div>
+
+              <div className="space-y-3 border-t border-slate-200 pt-4">
+                <Label htmlFor="desiredDomain">Domain *</Label>
+                <p className="text-sm text-slate-500">
+                  You can edit your domain before submitting. Verify availability
+                  after any change.
+                </p>
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Input
+                    id="desiredDomain"
+                    className="font-mono"
+                    value={values.desiredDomain}
+                    onChange={(e) => {
+                      form.setValue("desiredDomain", e.target.value);
+                      setDomainVerified(false);
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleVerifyDomain}
+                    disabled={verifyingDomain || !values.desiredDomain.trim()}
+                  >
+                    {verifyingDomain ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Verify availability"
+                    )}
+                  </Button>
+                </div>
+                {domainVerified && values.desiredDomain && (
+                  <p className="text-sm text-emerald-600">
+                    Domain verified as available.
+                  </p>
+                )}
+                {!domainVerified && values.desiredDomain && (
+                  <p className="text-sm text-amber-600">
+                    Verify your domain before submitting.
+                  </p>
+                )}
+              </div>
+
               <div className="flex items-start gap-3 pt-4">
                 <Checkbox
                   id="consent"
@@ -439,7 +518,7 @@ export function ApplicationForm({
               <Button
                 type="button"
                 onClick={handleSubmit}
-                disabled={submitting}
+                disabled={submitting || !domainVerified}
               >
                 {submitting ? "Submitting..." : "Submit Application"}
               </Button>

@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { landingContent } from "@/lib/firstdomain/content/landing";
+import { DomainSearchCTA } from "@/components/firstdomain/DomainSearchCTA";
 
 export function HeroSection() {
   const { hero } = landingContent;
@@ -30,20 +29,11 @@ export function HeroSection() {
           {lead}
         </p>
 
-        <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link
-            href="/firstdomain/apply"
-            className="group inline-flex items-center gap-2 rounded-xl bg-neutral-950 py-3.5 pl-5 pr-4 text-[13px] font-medium text-white transition-colors hover:bg-neutral-700"
-          >
-            {hero.cta}
-            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-          <Link
-            href="/firstdomain/check-domain"
-            className="inline-flex items-center rounded-xl bg-neutral-100 px-5 py-3.5 text-[13px] font-medium text-neutral-900 transition-colors hover:bg-neutral-200"
-          >
-            {hero.secondaryCta}
-          </Link>
+        <div className="mt-9">
+          <p className="mb-4 text-[13px] font-medium text-neutral-700">
+            Search for your domain to get started
+          </p>
+          <DomainSearchCTA id="search" />
         </div>
 
         {rest.length > 0 && (
