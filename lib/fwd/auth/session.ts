@@ -1,17 +1,9 @@
+import { getSessionSecret } from "./config";
+
 export const ADMIN_SESSION_COOKIE = "fwd_admin_session";
 /** Accept legacy First Domain cookie during cutover. */
 export const LEGACY_ADMIN_SESSION_COOKIE = "fd_admin_session";
 export const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-function getSecret(): string {
-  return (
-    process.env.FWD_SESSION_SECRET ||
-    process.env.FIRSTDOMAIN_SESSION_SECRET ||
-    process.env.FWD_ADMIN_PASSWORD ||
-    process.env.FIRSTDOMAIN_ADMIN_PASSWORD ||
-    ""
-  );
-}
 
 async function hmacSign(payload: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -38,7 +30,7 @@ async function hmacSign(payload: string, secret: string): Promise<string> {
 }
 
 export async function createSessionToken(): Promise<string> {
-  const secret = getSecret();
+  const secret = getSessionSecret();
   if (!secret) throw new Error("FWD_SESSION_SECRET is not configured");
   const expiry = String(Date.now() + SESSION_DURATION_MS);
   const signature = await hmacSign(expiry, secret);
@@ -49,7 +41,7 @@ export async function verifySessionToken(
   token: string | undefined
 ): Promise<boolean> {
   if (!token) return false;
-  const secret = getSecret();
+  const secret = getSessionSecret();
   if (!secret) return false;
 
   const [expiry, signature] = token.split(".");

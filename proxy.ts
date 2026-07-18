@@ -4,13 +4,12 @@ import {
   LEGACY_ADMIN_SESSION_COOKIE,
   verifySessionToken,
 } from "@/lib/fwd/auth/session";
+import { getAdminPassword } from "@/lib/fwd/auth/config";
 
-function redirectToSignIn(request: NextRequest, reason?: string) {
-  const signInUrl = new URL("/fwd/sign-in", request.url);
-  if (reason) signInUrl.searchParams.set("error", reason);
-  return NextResponse.redirect(signInUrl);
-}
-
+/**
+ * Lightweight gate only. Auth configuration + final enforcement also run in
+ * the Node `/fwd` layouts, which reliably see Vercel runtime env vars.
+ */
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -18,13 +17,11 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const adminPassword =
-    process.env.FWD_ADMIN_PASSWORD || process.env.FIRSTDOMAIN_ADMIN_PASSWORD;
-
+  // If proxy cannot see the password, do not hard-fail with "not_configured".
+  // Let the Node layout/sign-in page decide — that path reads runtime env.
+  const adminPassword = getAdminPassword();
   if (!adminPassword) {
-    // Always send humans to the sign-in screen with setup guidance.
-    // (Avoid raw JSON 503 on /fwd in production.)
-    return redirectToSignIn(request, "not_configured");
+    return NextResponse.next();
   }
 
   const token =
@@ -33,7 +30,8 @@ export default async function proxy(request: NextRequest) {
   const valid = await verifySessionToken(token);
 
   if (!valid) {
-    return redirectToSignIn(request);
+    const signInUrl = new URL("/fwd/sign-in", request.url);
+    return NextResponse.redirect(signInUrl);
   }
 
   return NextResponse.next();

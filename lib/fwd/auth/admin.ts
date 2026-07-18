@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getAdminPassword, isAdminAuthConfigured } from "./config";
 import {
   ADMIN_SESSION_COOKIE,
   LEGACY_ADMIN_SESSION_COOKIE,
@@ -10,14 +11,9 @@ import {
   verifySessionToken,
 } from "./session";
 
-function getAdminPassword(): string | undefined {
-  return process.env.FWD_ADMIN_PASSWORD || process.env.FIRSTDOMAIN_ADMIN_PASSWORD;
-}
-
 export async function requireAdmin() {
   const adminPassword = getAdminPassword();
-  // Mirror proxy.ts: allow unauthenticated exploration in local dev
-  // when admin password is not configured.
+  // Mirror local-dev convenience: allow exploration when password is unset.
   if (!adminPassword && process.env.NODE_ENV !== "production") {
     return { admin: true as const };
   }
@@ -34,6 +30,9 @@ export async function requireAdmin() {
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {
+  if (!isAdminAuthConfigured() && process.env.NODE_ENV !== "production") {
+    return true;
+  }
   const cookieStore = await cookies();
   const token =
     cookieStore.get(ADMIN_SESSION_COOKIE)?.value ||
@@ -49,7 +48,10 @@ export async function loginAction(
   const adminPassword = getAdminPassword();
 
   if (!adminPassword) {
-    return { error: "Admin password is not configured" };
+    return {
+      error:
+        "Admin password is not configured. Set FWD_ADMIN_PASSWORD (and FWD_SESSION_SECRET) in Vercel, then redeploy.",
+    };
   }
 
   if (typeof password !== "string" || password.length === 0) {
@@ -67,15 +69,22 @@ export async function loginAction(
     return { error: "Incorrect password" };
   }
 
-  const token = await createSessionToken();
-  const cookieStore = await cookies();
-  cookieStore.set(ADMIN_SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: SESSION_DURATION_MS / 1000,
-  });
+  try {
+    const token = await createSessionToken();
+    const cookieStore = await cookies();
+    cookieStore.set(ADMIN_SESSION_COOKIE, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: SESSION_DURATION_MS / 1000,
+    });
+  } catch {
+    return {
+      error:
+        "Session secret is not configured. Set FWD_SESSION_SECRET in Vercel, then redeploy.",
+    };
+  }
 
   redirect("/fwd");
 }
