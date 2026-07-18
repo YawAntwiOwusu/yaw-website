@@ -5,6 +5,12 @@ import {
   verifySessionToken,
 } from "@/lib/fwd/auth/session";
 
+function redirectToSignIn(request: NextRequest, reason?: string) {
+  const signInUrl = new URL("/fwd/sign-in", request.url);
+  if (reason) signInUrl.searchParams.set("error", reason);
+  return NextResponse.redirect(signInUrl);
+}
+
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -16,13 +22,9 @@ export default async function proxy(request: NextRequest) {
     process.env.FWD_ADMIN_PASSWORD || process.env.FIRSTDOMAIN_ADMIN_PASSWORD;
 
   if (!adminPassword) {
-    if (process.env.NODE_ENV === "production") {
-      return NextResponse.json(
-        { error: "Admin auth is not configured" },
-        { status: 503 }
-      );
-    }
-    return NextResponse.next();
+    // Always send humans to the sign-in screen with setup guidance.
+    // (Avoid raw JSON 503 on /fwd in production.)
+    return redirectToSignIn(request, "not_configured");
   }
 
   const token =
@@ -31,13 +33,12 @@ export default async function proxy(request: NextRequest) {
   const valid = await verifySessionToken(token);
 
   if (!valid) {
-    const signInUrl = new URL("/fwd/sign-in", request.url);
-    return NextResponse.redirect(signInUrl);
+    return redirectToSignIn(request);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/fwd/:path*"],
+  matcher: ["/fwd", "/fwd/:path*"],
 };
