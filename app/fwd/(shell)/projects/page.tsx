@@ -1,10 +1,11 @@
 import { listAdminProjects } from "@/lib/fwd/actions/site-content";
 import { ProjectsManager } from "@/components/fwd/ProjectsManager";
+import { FwdPageHeader } from "@/components/fwd/FwdPageHeader";
 
-export const metadata = { title: "Projects — Site — FWD" };
+export const metadata = { title: "Projects — FWD" };
 export const dynamic = "force-dynamic";
 
-export default async function SiteProjectsPage() {
+export default async function ProjectsPage() {
   let projects: Awaited<ReturnType<typeof listAdminProjects>> = [];
   let error: string | null = null;
   try {
@@ -15,18 +16,17 @@ export default async function SiteProjectsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900">Projects</h1>
-      <p className="mt-1 text-slate-600">
-        Portfolio cards shown on the homepage.
-      </p>
+      <FwdPageHeader
+        eyebrow="Manage"
+        title="Projects"
+        description="Portfolio cards shown on the homepage."
+      />
       {error && (
-        <p className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           {error}
         </p>
       )}
-      <div className="mt-6">
-        <ProjectsManager projects={projects} />
-      </div>
+      <ProjectsManager projects={projects} />
     </div>
   );
 }

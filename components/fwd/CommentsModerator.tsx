@@ -54,8 +54,8 @@ export function CommentsModerator({
             <Link
               href={
                 status === "all"
-                  ? "/fwd/products/site/comments"
-                  : `/fwd/products/site/comments?status=${status}`
+                  ? "/fwd/comments"
+                  : `/fwd/comments?status=${status}`
               }
             >
               {status}

@@ -20,10 +20,10 @@ import { slugify } from "@/lib/utils";
 function revalidateSite() {
   revalidatePath("/notes");
   revalidatePath("/");
-  revalidatePath("/fwd/products/site");
-  revalidatePath("/fwd/products/site/blog");
-  revalidatePath("/fwd/products/site/projects");
-  revalidatePath("/fwd/products/site/comments");
+  revalidatePath("/fwd");
+  revalidatePath("/fwd/blog");
+  revalidatePath("/fwd/projects");
+  revalidatePath("/fwd/comments");
   revalidatePath("/fwd/media");
 }
 
@@ -289,7 +289,7 @@ export async function moderateComment(
   await requireAdmin();
   const db = requireDb();
   await db.update(comments).set({ status }).where(eq(comments.id, id));
-  revalidatePath("/fwd/products/site/comments");
+  revalidatePath("/fwd/comments");
   return { success: true };
 }
 
@@ -297,7 +297,7 @@ export async function deleteComment(id: string) {
   await requireAdmin();
   const db = requireDb();
   await db.delete(comments).where(eq(comments.id, id));
-  revalidatePath("/fwd/products/site/comments");
+  revalidatePath("/fwd/comments");
   return { success: true };
 }
 

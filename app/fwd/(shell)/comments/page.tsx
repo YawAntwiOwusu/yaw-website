@@ -1,11 +1,12 @@
 import { listAdminComments } from "@/lib/fwd/actions/site-content";
 import { CommentsModerator } from "@/components/fwd/CommentsModerator";
+import { FwdPageHeader } from "@/components/fwd/FwdPageHeader";
 import type { Comment } from "@/lib/db";
 
-export const metadata = { title: "Comments — Site — FWD" };
+export const metadata = { title: "Comments — FWD" };
 export const dynamic = "force-dynamic";
 
-export default async function SiteCommentsPage({
+export default async function CommentsPage({
   searchParams,
 }: {
   searchParams: Promise<{ status?: string }>;
@@ -26,21 +27,17 @@ export default async function SiteCommentsPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900">Comments</h1>
-      <p className="mt-1 text-slate-600">
-        Approve, spam, or delete comments on notes.
-      </p>
+      <FwdPageHeader
+        eyebrow="Manage"
+        title="Comments"
+        description="Approve, spam, or delete comments on notes."
+      />
       {error && (
-        <p className="mt-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           {error}
         </p>
       )}
-      <div className="mt-6">
-        <CommentsModerator
-          rows={rows}
-          statusFilter={params.status || "all"}
-        />
-      </div>
+      <CommentsModerator rows={rows} statusFilter={params.status || "all"} />
     </div>
   );
 }

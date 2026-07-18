@@ -1,7 +1,7 @@
 import { connection } from "next/server";
 import { unstable_noStore as noStore } from "next/cache";
 import { redirect } from "next/navigation";
-import { FwdShellNav } from "@/components/fwd/FwdShellNav";
+import { FwdSidebar } from "@/components/fwd/FwdSidebar";
 import { isAdminAuthConfigured } from "@/lib/fwd/auth/config";
 import { isAdminAuthenticated } from "@/lib/fwd/auth/admin";
 
@@ -15,7 +15,6 @@ export default async function FwdLayout({
   children: React.ReactNode;
 }) {
   noStore();
-  // Ensure env is read at request time on Vercel (Next 16), not baked at build.
   await connection();
 
   if (!isAdminAuthConfigured()) {
@@ -27,9 +26,13 @@ export default async function FwdLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <FwdShellNav />
-      <div className="mx-auto max-w-7xl px-6 py-8">{children}</div>
+    <div className="flex min-h-screen bg-neutral-100">
+      <FwdSidebar />
+      <main className="flex-1 overflow-auto">
+        <div className="mx-auto max-w-6xl px-6 py-8 md:px-10 md:py-10">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

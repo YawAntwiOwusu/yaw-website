@@ -8,19 +8,8 @@ export type FwdProduct = {
   nav: { href: string; label: string }[];
 };
 
+/** Products managed inside FWD (Site CMS is the admin itself, not a product). */
 export const products: FwdProduct[] = [
-  {
-    slug: "site",
-    name: "Site",
-    description: "Blog, projects, and comments for yawantwiowusu.com",
-    href: "/fwd/products/site",
-    nav: [
-      { href: "/fwd/products/site", label: "Overview" },
-      { href: "/fwd/products/site/blog", label: "Blog" },
-      { href: "/fwd/products/site/projects", label: "Projects" },
-      { href: "/fwd/products/site/comments", label: "Comments" },
-    ],
-  },
   {
     slug: "firstdomain",
     name: "First Domain",
@@ -41,7 +30,10 @@ export function getProduct(slug: string): FwdProduct | undefined {
 }
 
 export function productSlugFromPath(path: string): ProductSlug {
-  if (path.startsWith("/firstdomain") || path.startsWith("/fwd/products/firstdomain")) {
+  if (
+    path.startsWith("/firstdomain") ||
+    path.startsWith("/fwd/products/firstdomain")
+  ) {
     return "firstdomain";
   }
   return "site";

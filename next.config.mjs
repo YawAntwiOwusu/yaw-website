@@ -8,6 +8,18 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+      {
+        protocol: "https",
+        hostname: "*.blob.vercel-storage.com",
+      },
+    ],
+  },
   async headers() {
     return [
       {
@@ -44,6 +56,36 @@ const nextConfig = {
       {
         source: "/firstdomain/admin/:path*",
         destination: "/fwd/products/firstdomain/:path*",
+        permanent: false,
+      },
+      {
+        source: "/fwd/products/site",
+        destination: "/fwd",
+        permanent: false,
+      },
+      {
+        source: "/fwd/products/site/blog",
+        destination: "/fwd/blog",
+        permanent: false,
+      },
+      {
+        source: "/fwd/products/site/blog/new",
+        destination: "/fwd/blog/new",
+        permanent: false,
+      },
+      {
+        source: "/fwd/products/site/blog/:id",
+        destination: "/fwd/blog/:id",
+        permanent: false,
+      },
+      {
+        source: "/fwd/products/site/projects",
+        destination: "/fwd/projects",
+        permanent: false,
+      },
+      {
+        source: "/fwd/products/site/comments",
+        destination: "/fwd/comments",
         permanent: false,
       },
     ];

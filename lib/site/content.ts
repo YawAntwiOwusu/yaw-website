@@ -13,7 +13,9 @@ function postToNote(post: Post): Note {
     slug: post.slug,
     title: post.title,
     category: post.category as NoteCategory,
-    datePublished: (post.publishedAt ?? post.createdAt).toISOString().slice(0, 10),
+    datePublished: (post.publishedAt ?? post.createdAt)
+      .toISOString()
+      .slice(0, 10),
     featuredImage: post.featuredImageUrl,
     content: post.content,
     excerpt: post.excerpt ?? undefined,
@@ -34,19 +36,21 @@ function projectRowToProject(row: ProjectRow): Project {
   };
 }
 
+/** True when Neon is configured — public reads must come from DB. */
+function hasDatabase() {
+  return Boolean(db);
+}
+
 export async function listPublishedNotes(): Promise<Note[]> {
-  if (!db) return getStaticNotes();
-  try {
-    const rows = await db
-      .select()
-      .from(posts)
-      .where(eq(posts.status, "published"))
-      .orderBy(desc(posts.publishedAt));
-    if (rows.length === 0) return getStaticNotes();
-    return rows.map(postToNote);
-  } catch {
-    return getStaticNotes();
-  }
+  // No DATABASE_URL: local/static pipeline source only.
+  if (!hasDatabase()) return getStaticNotes();
+
+  const rows = await db!
+    .select()
+    .from(posts)
+    .where(eq(posts.status, "published"))
+    .orderBy(desc(posts.publishedAt));
+  return rows.map(postToNote);
 }
 
 export async function listPublishedNoteItems(): Promise<NoteListItem[]> {
@@ -57,38 +61,25 @@ export async function listPublishedNoteItems(): Promise<NoteListItem[]> {
 export async function getPublishedNoteBySlug(
   slug: string
 ): Promise<Note | undefined> {
-  if (!db) return getStaticNoteBySlug(slug);
-  try {
-    const [row] = await db
-      .select()
-      .from(posts)
-      .where(and(eq(posts.slug, slug), eq(posts.status, "published")))
-      .limit(1);
-    if (!row) {
-      // Fall back only when table appears empty / unseeded
-      const anyPost = await db.select({ id: posts.id }).from(posts).limit(1);
-      if (anyPost.length === 0) return getStaticNoteBySlug(slug);
-      return undefined;
-    }
-    return postToNote(row);
-  } catch {
-    return getStaticNoteBySlug(slug);
-  }
+  if (!hasDatabase()) return getStaticNoteBySlug(slug);
+
+  const [row] = await db!
+    .select()
+    .from(posts)
+    .where(and(eq(posts.slug, slug), eq(posts.status, "published")))
+    .limit(1);
+  return row ? postToNote(row) : undefined;
 }
 
 export async function listPublishedProjects(): Promise<Project[]> {
-  if (!db) return getStaticProjects();
-  try {
-    const rows = await db
-      .select()
-      .from(projects)
-      .where(eq(projects.published, true))
-      .orderBy(asc(projects.sortOrder), desc(projects.createdAt));
-    if (rows.length === 0) return getStaticProjects();
-    return rows.map(projectRowToProject);
-  } catch {
-    return getStaticProjects();
-  }
+  if (!hasDatabase()) return getStaticProjects();
+
+  const rows = await db!
+    .select()
+    .from(projects)
+    .where(eq(projects.published, true))
+    .orderBy(asc(projects.sortOrder), desc(projects.createdAt));
+  return rows.map(projectRowToProject);
 }
 
 export { postToNote, projectRowToProject };

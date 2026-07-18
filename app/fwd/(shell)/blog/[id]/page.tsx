@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getAdminPost } from "@/lib/fwd/actions/site-content";
 import { PostEditorForm } from "@/components/fwd/PostEditorForm";
+import { FwdPageHeader } from "@/components/fwd/FwdPageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +16,12 @@ export default async function EditPostPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900">Edit post</h1>
-      <p className="mt-1 text-slate-600">/{post.slug}</p>
-      <div className="mt-6">
-        <PostEditorForm post={post} />
-      </div>
+      <FwdPageHeader
+        eyebrow="Manage"
+        title="Edit post"
+        description={`/${post.slug}`}
+      />
+      <PostEditorForm post={post} />
     </div>
   );
 }

@@ -66,7 +66,7 @@ export function PostEditorForm({ post }: { post?: Post }) {
           router.refresh();
         } else {
           const created = await createPost(payload);
-          router.push(`/fwd/products/site/blog/${created.id}`);
+          router.push(`/fwd/blog/${created.id}`);
         }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Failed to save");
@@ -79,7 +79,7 @@ export function PostEditorForm({ post }: { post?: Post }) {
     if (!window.confirm("Delete this post?")) return;
     startTransition(async () => {
       await deletePost(post.id);
-      router.push("/fwd/products/site/blog");
+      router.push("/fwd/blog");
     });
   }
 

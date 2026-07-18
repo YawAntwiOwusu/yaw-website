@@ -10,8 +10,11 @@
     "regen-notes": "node scripts/generate-notes-from-doc-export.mjs",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
+    "db:ensure:site": "node --env-file=.env.local scripts/ensure-site-schema.mjs",
     "db:seed": "node --env-file=.env.local --experimental-strip-types scripts/seed-firstdomain.mjs",
-    "db:seed:site": "node --env-file=.env.local --experimental-strip-types scripts/seed-site-cms.mjs"
+    "db:seed:site": "node --env-file=.env.local --experimental-strip-types scripts/seed-site-cms.mjs",
+    "db:seed:media": "node --env-file=.env.local --experimental-strip-types scripts/seed-site-media.mjs",
+    "db:bootstrap:site": "node --env-file=.env.local --experimental-strip-types scripts/bootstrap-site-cms.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

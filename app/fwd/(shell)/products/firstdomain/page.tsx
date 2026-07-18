@@ -10,8 +10,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CycleControls } from "@/components/firstdomain/admin/CycleControls";
+import { FwdPageHeader } from "@/components/fwd/FwdPageHeader";
 
-export const metadata = { title: "First Domain" };
+export const metadata = { title: "First Domain — FWD" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
@@ -44,10 +45,23 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900">First Domain</h1>
-      <p className="mt-1 text-slate-600">
-        First Domain program overview and monthly workflow
-      </p>
+      <FwdPageHeader
+        eyebrow="Products"
+        title="First Domain"
+        description="Program overview and monthly workflow."
+        actions={
+          <>
+            <Button asChild>
+              <Link href="/fwd/products/firstdomain/applications">
+                Applications
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/fwd/products/firstdomain/domains">Domain queue</Link>
+            </Button>
+          </>
+        }
+      />
 
       {currentCycle && (
         <div className="mt-8">
@@ -98,14 +112,6 @@ export default async function AdminDashboardPage() {
         </Card>
       </div>
 
-      <div className="mt-8 flex gap-4">
-        <Button asChild>
-          <Link href="/fwd/products/firstdomain/applications">View Applications</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/fwd/products/firstdomain/domains">Domain Queue</Link>
-        </Button>
-      </div>
     </div>
   );
 }
