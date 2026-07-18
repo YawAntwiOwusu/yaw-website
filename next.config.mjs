@@ -8,6 +8,22 @@ const nextConfig = {
   turbopack: {
     root: __dirname,
   },
+  async headers() {
+    return [
+      {
+        source: "/fwd/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store" },
+        ],
+      },
+      {
+        source: "/api/fwd/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

@@ -7,19 +7,20 @@ import {
 import { getAdminPassword } from "@/lib/fwd/auth/config";
 
 /**
- * Lightweight gate only. Auth configuration + final enforcement also run in
- * the Node `/fwd` layouts, which reliably see Vercel runtime env vars.
+ * Soft gate only. Final auth + env checks happen in the Node /fwd layout
+ * so Vercel runtime secrets are read per-request (not from a prerender cache).
  */
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/fwd/sign-in")) {
-    return NextResponse.next();
+    const res = NextResponse.next();
+    res.headers.set("Cache-Control", "private, no-store");
+    return res;
   }
 
-  // If proxy cannot see the password, do not hard-fail with "not_configured".
-  // Let the Node layout/sign-in page decide — that path reads runtime env.
   const adminPassword = getAdminPassword();
+  // If proxy can't see the password, let the Node layout decide.
   if (!adminPassword) {
     return NextResponse.next();
   }
@@ -34,7 +35,9 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(signInUrl);
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  res.headers.set("Cache-Control", "private, no-store");
+  return res;
 }
 
 export const config = {
