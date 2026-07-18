@@ -1,16 +1,8 @@
-import { getAllNotes } from "@/lib/notes";
-import type { NoteListItem } from "@/types/note";
+import { listPublishedNoteItems } from "@/lib/site/content";
 import NotesBrowse from "./NotesBrowse";
 
-function toListItems(notes: ReturnType<typeof getAllNotes>): NoteListItem[] {
-  return notes.map(
-    ({ content: _content, ...rest }) => rest
-  );
-}
-
-export default function NotesSection() {
-  const notes = getAllNotes();
-  const listItems = toListItems(notes);
+export default async function NotesSection() {
+  const listItems = await listPublishedNoteItems();
 
   return (
     <section

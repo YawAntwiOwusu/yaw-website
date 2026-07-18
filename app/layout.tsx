@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Google_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { PageviewBeacon } from "@/components/analytics/PageviewBeacon";
 import { SITE_URL, siteMetadataBase } from "@/lib/site";
 import "./globals.css";
 
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en" className={googleSans.variable}>
       <body className={`${googleSans.className} antialiased`}>
         {children}
+        <PageviewBeacon />
         <Analytics />
       </body>
     </html>

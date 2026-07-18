@@ -137,8 +137,8 @@ export async function updateApplicationReview(
     }
   }
 
-  revalidatePath("/firstdomain/admin/applications");
-  revalidatePath(`/firstdomain/admin/applications/${applicationId}`);
+  revalidatePath("/fwd/products/firstdomain/applications");
+  revalidatePath(`/fwd/products/firstdomain/applications/${applicationId}`);
   return { success: true };
 }
 
@@ -192,7 +192,7 @@ export async function registerDomainForApplication(applicationId: string) {
       .where(eq(domainRegistrations.id, registration.id));
   }
 
-  revalidatePath("/firstdomain/admin/domains");
+  revalidatePath("/fwd/products/firstdomain/domains");
   return result;
 }
 
@@ -205,7 +205,7 @@ export async function updateCycleStatus(cycleId: string, status: CycleStatus) {
     .set({ status, updatedAt: new Date() })
     .where(eq(applicationCycles.id, cycleId));
 
-  revalidatePath("/firstdomain/admin");
+  revalidatePath("/fwd/products/firstdomain");
   return { success: true };
 }
 
@@ -236,7 +236,7 @@ export async function addWinnerUpdate(
     body,
   });
 
-  revalidatePath("/firstdomain/admin/content");
+  revalidatePath("/fwd/products/firstdomain/content");
   return { success: true };
 }
 

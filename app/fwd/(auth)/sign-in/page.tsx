@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { loginAction } from "@/lib/firstdomain/auth/admin";
+import { loginAction } from "@/lib/fwd/auth/admin";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function AdminSignInPage() {
+export default function FwdSignInPage() {
   const [state, formAction, pending] = useActionState(loginAction, {
     error: null,
   });
@@ -22,7 +22,7 @@ export default function AdminSignInPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>First Domain Admin</CardTitle>
+          <CardTitle>FWD Admin</CardTitle>
           <CardDescription>
             Enter the admin password to continue.
           </CardDescription>

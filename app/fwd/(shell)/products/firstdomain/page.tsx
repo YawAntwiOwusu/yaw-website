@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CycleControls } from "@/components/firstdomain/admin/CycleControls";
 
-export const metadata = { title: "Admin Dashboard" };
+export const metadata = { title: "First Domain" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
@@ -44,7 +44,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-slate-900">First Domain</h1>
       <p className="mt-1 text-slate-600">
         First Domain program overview and monthly workflow
       </p>
@@ -100,10 +100,10 @@ export default async function AdminDashboardPage() {
 
       <div className="mt-8 flex gap-4">
         <Button asChild>
-          <Link href="/firstdomain/admin/applications">View Applications</Link>
+          <Link href="/fwd/products/firstdomain/applications">View Applications</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link href="/firstdomain/admin/domains">Domain Queue</Link>
+          <Link href="/fwd/products/firstdomain/domains">Domain Queue</Link>
         </Button>
       </div>
     </div>

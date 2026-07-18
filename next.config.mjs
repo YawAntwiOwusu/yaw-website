@@ -15,9 +15,23 @@ const nextConfig = {
         destination: "/:slug",
         permanent: true,
       },
+      {
+        source: "/firstdomain/admin/sign-in",
+        destination: "/fwd/sign-in",
+        permanent: false,
+      },
+      {
+        source: "/firstdomain/admin",
+        destination: "/fwd/products/firstdomain",
+        permanent: false,
+      },
+      {
+        source: "/firstdomain/admin/:path*",
+        destination: "/fwd/products/firstdomain/:path*",
+        permanent: false,
+      },
     ];
   },
 };
 
 export default nextConfig;
-

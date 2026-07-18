@@ -1,10 +1,15 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getNoteBySlug, formatDate, getAllNotes } from "@/lib/notes";
+import { formatDate, getAllNotes } from "@/lib/notes";
+import {
+  getPublishedNoteBySlug,
+  listPublishedNotes,
+} from "@/lib/site/content";
 import NoteArticleJsonLd from "@/components/NoteArticleJsonLd";
 import NoteTemplate from "@/components/NoteTemplate";
 import MinimalHeader from "@/components/MinimalHeader";
 import RelatedNotes from "@/components/RelatedNotes";
+import { NoteComments } from "@/components/comments/NoteComments";
 import {
   SITE_URL,
   absoluteUrl,
@@ -15,7 +20,10 @@ interface NotePageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
+export const dynamic = "force-dynamic";
+
+export async function generateStaticParams() {
+  // Build-time paths from static seed; runtime also serves DB posts.
   return getAllNotes().map((note) => ({ slug: note.slug }));
 }
 
@@ -23,7 +31,7 @@ export async function generateMetadata({
   params,
 }: NotePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const note = getNoteBySlug(slug);
+  const note = await getPublishedNoteBySlug(slug);
 
   if (!note) {
     return {
@@ -98,7 +106,7 @@ function getReadTimeMinutes(html: string): number {
 
 export default async function NoteArticlePage({ params }: NotePageProps) {
   const { slug } = await params;
-  const note = getNoteBySlug(slug);
+  const note = await getPublishedNoteBySlug(slug);
 
   if (!note) {
     notFound();
@@ -106,7 +114,8 @@ export default async function NoteArticlePage({ params }: NotePageProps) {
 
   const formattedDate = formatDate(note.datePublished);
   const readTime = getReadTimeMinutes(note.content);
-  const otherNotes = getAllNotes().filter((n) => n.slug !== note.slug).slice(0, 4);
+  const allNotes = await listPublishedNotes();
+  const otherNotes = allNotes.filter((n) => n.slug !== note.slug).slice(0, 4);
   const shareUrl = `${SITE_URL}/${note.slug}`;
   const shareSummary = noteMetaDescription(note);
   const authorName = note.author ?? "Yaw Antwi-Owusu";
@@ -136,6 +145,7 @@ export default async function NoteArticlePage({ params }: NotePageProps) {
             shareUrl={shareUrl}
             shareSummary={shareSummary}
           />
+          <NoteComments postSlug={note.slug} />
           {otherNotes.length > 0 && <RelatedNotes notes={otherNotes} />}
         </div>
       </div>

@@ -43,7 +43,7 @@ export function ApplicationsTable({
     } else {
       params.delete(key);
     }
-    router.push(`/firstdomain/admin/applications?${params.toString()}`);
+    router.push(`/fwd/products/firstdomain/applications?${params.toString()}`);
   }
 
   return (
@@ -167,7 +167,7 @@ export function ApplicationsTable({
                 <tr key={app.id} className="hover:bg-slate-50">
                   <td className="px-4 py-3">
                     <Link
-                      href={`/firstdomain/admin/applications/${app.id}`}
+                      href={`/fwd/products/firstdomain/applications/${app.id}`}
                       className="font-medium text-indigo-600 hover:text-indigo-700"
                     >
                       {app.fullName}

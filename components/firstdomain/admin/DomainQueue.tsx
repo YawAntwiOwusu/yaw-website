@@ -77,7 +77,7 @@ export function DomainQueue({ registrations }: DomainQueueProps) {
                 )}
                 <Button asChild size="sm" variant="outline">
                   <Link
-                    href={`/firstdomain/admin/applications/${reg.applicationId}`}
+                    href={`/fwd/products/firstdomain/applications/${reg.applicationId}`}
                   >
                     View Application
                   </Link>

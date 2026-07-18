@@ -2,11 +2,11 @@ import Link from "next/link";
 import { logoutAction } from "@/lib/firstdomain/auth/admin";
 
 const adminLinks = [
-  { href: "/firstdomain/admin", label: "Dashboard" },
-  { href: "/firstdomain/admin/applications", label: "Applications" },
-  { href: "/firstdomain/admin/founders", label: "Founders" },
-  { href: "/firstdomain/admin/domains", label: "Domains" },
-  { href: "/firstdomain/admin/content", label: "Content" },
+  { href: "/fwd/products/firstdomain", label: "Dashboard" },
+  { href: "/fwd/products/firstdomain/applications", label: "Applications" },
+  { href: "/fwd/products/firstdomain/founders", label: "Founders" },
+  { href: "/fwd/products/firstdomain/domains", label: "Domains" },
+  { href: "/fwd/products/firstdomain/content", label: "Content" },
 ];
 
 export function AdminNav() {
@@ -15,7 +15,7 @@ export function AdminNav() {
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-6">
         <div className="flex items-center gap-8">
           <Link
-            href="/firstdomain/admin"
+            href="/fwd/products/firstdomain"
             className="font-semibold text-slate-900"
           >
             First Domain Admin

@@ -40,7 +40,7 @@ export default async function ApplicationReviewPage({
   return (
     <div>
       <Link
-        href="/firstdomain/admin/applications"
+        href="/fwd/products/firstdomain/applications"
         className="text-sm text-indigo-600 hover:text-indigo-700"
       >
         ← Back to Applications

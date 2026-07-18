@@ -1,8 +1,8 @@
-import { getAllProjects } from "@/lib/projects";
+import { listPublishedProjects } from "@/lib/site/content";
 import ProjectCard from "./ProjectCard";
 
-export default function ProjectsSection() {
-  const projects = getAllProjects();
+export default async function ProjectsSection() {
+  const projects = await listPublishedProjects();
 
   return (
     <section

@@ -2,12 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getNoteBySlug } from "@/lib/notes";
 
 const items = [
   { label: "Notes", href: "/notes" },
   { label: "About", href: "/about" },
 ] as const;
+
+/** Known root segments that are not note articles. */
+const STATIC_ROOTS = new Set([
+  "notes",
+  "about",
+  "firstdomain",
+  "fwd",
+  "api",
+  "work",
+]);
 
 interface NavigationProps {
   className?: string;
@@ -17,7 +26,7 @@ export default function Navigation({ className = "" }: NavigationProps) {
   const pathname = usePathname();
   const firstSegment = pathname.split("/").filter(Boolean)[0];
   const onArticlePage = Boolean(
-    firstSegment && getNoteBySlug(firstSegment)
+    firstSegment && !STATIC_ROOTS.has(firstSegment)
   );
 
   return (
